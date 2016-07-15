@@ -22,6 +22,8 @@
    
 # need oracle java 
 # GET RPM FROM ORACLE
+wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jre-8u60-linux-x64.rpm
+
 # log into a host in the clustere
 # scp jdk and ssh key 
 # 
