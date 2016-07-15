@@ -14,3 +14,5 @@ cloudera-director bootstrap /home/marty/cluster.conf
 Google Cloud and AWS conf files are provided here.
 
 After your cluster is up and running see the working session script to get GATK installed and running.  Note that much of the effort is to upgrade the cluster to Java8
+
+Thanks to Adam, Louis, and Tom - this wouldn't be running without their help
