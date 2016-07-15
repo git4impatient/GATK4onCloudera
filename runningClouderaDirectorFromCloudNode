@@ -1,0 +1,15 @@
+# (C) copyright 2016 Martin Lurie - sample code not supported
+# create single node in gc
+# install java
+# you really want the Oracle java8.  This is a shortcut
+# the CM and data nodes will get java7 based on what is in the 
+# parcels
+#
+sudo yum -y install java-1.8.0-openjdk-devel.x86_64 
+# install cloudera director
+cd /etc/yum.repos.d/
+sudo wget "http://archive.cloudera.com/director/redhat/6/x86_64/director/cloudera-director.repo"
+sudo yum -y install cloudera-director-client
+# upload cluster.conf and private ssh key
+# run director bootstrap
+sudo  cloudera-director bootstrap /home/marty/cluster.conf
