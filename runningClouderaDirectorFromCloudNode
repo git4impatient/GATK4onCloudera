@@ -1,9 +1,7 @@
 # (C) copyright 2016 Martin Lurie - sample code not supported
-# create single node in gc
+# create single node 
 # install java
-# you really want the Oracle java8.  This is a shortcut
-# the CM and data nodes will get java7 based on what is in the 
-# parcels
+# you really want the Oracle java8.  
 #
 sudo yum -y install java-1.8.0-openjdk-devel.x86_64 
 # install cloudera director
