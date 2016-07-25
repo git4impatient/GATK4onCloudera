@@ -1,0 +1,13 @@
+# (C) copyright 2016 Martin Lurie - sample code not supported
+# create single node in gc
+# 
+# 
+#
+sudo yum -y install java-1.8.0-openjdk-devel.x86_64 
+# install cloudera director
+cd /etc/yum.repos.d/
+sudo wget "http://archive.cloudera.com/director/redhat/6/x86_64/director/cloudera-director.repo"
+sudo yum -y install cloudera-director-client
+# upload cluster.conf and private ssh key
+# run director bootstrap
+sudo  cloudera-director bootstrap /home/REPLACEWITHPATHTOYOURCONFFILE/cluster.conf
