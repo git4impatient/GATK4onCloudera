@@ -1,0 +1,83 @@
+instant (almost) gatk
+
+This outlines how to create a Cloudera cluster in the cloud.  You would do this if you want to do analysis with GATK but lack a compute environment of your own. The example here will create a 5 node Cloudera Hadoop cluster. If you have lots of data or want results really fast you probably will want more nodes. If you are new to the cloud environment you will need to have your cloud provider increase your limits for cpu, disk, network, memory as genomic files and processing can be very resource intensive.
+
+The steps are as follows:
+- Create an account with the cloud provider of your choice, for example:
+Google Compute Engine(GCE): https://cloud.google.com/compute/  or 
+Amazon Web Services(AWS): https://aws.amazon.com/
+- Prepare the configuration files
+- Create a virtual computer in the cloud
+- Log into that node and run the appropriate cluster creation script
+- Upgrade the cluster to Java8
+- Install GATK4
+- Solve your genomic challenge with GATK :-)
+
+And now for the details...
+
+- Prepare the Configuration files:
+
+Let's assume you've provided your charge card to the cloud provider and you have an account.  
+
+-GCE
+
+For GCE you'll need your ProjectID, serviceID, JSON key, and ssh.key file.  
+The projectID is found here:
+
+
+The serviceID is generated here:
+
+The ssh.key file is generated here:
+
+You'll also have to decide what region you want to use, the example uses us-east1
+With these parameters copy the configuration file found here and update with your values:
+https://github.com/git4impatient/GATK4onCloudera/blob/master/clouderaDirectorGoogleCloud.conf
+
+-AWS
+
+For AWS you'll need your accessKeyId, secretAccessKey, subnetId, region, securityGroupsIds, ssh.pem file. Please note when creating a VPC make sure you use the "VPC Wizard."  Do not select "create vpc" as this will make for routing problems as you work on your cluster.
+With these parameters copy the configuration file found here and update with your values:
+https://github.com/git4impatient/GATK4onCloudera/blob/master/ClouderaDirectorAWS_Cluster.conf
+
+- Create a virtual computer in the cloud
+
+This doesn't need to be a large instance.  Two cores, 8 gig ram, 15gig root filesystem. You can find the supported Linux OS list here: https://www.cloudera.com/documentation/director/latest/topics/director_deployment_requirements.html
+
+Create this computer using the admin console of GCE or AWS. 
+
+For GCE your screen will look like this.  Note the use of Ce
+
+
+If you are running Linux locally you don't have to create the remote node to instantiate the cluster.  Just install Cloudera Director locally, and then run the bootstrap command.  This is documented in the "go" script.  Effectively you are running "go" from your local machine.
+https://github.com/git4impatient/GATK4onCloudera/blob/master/go_script_to_create_cluster.sh
+
+- Log into that node and run the appropriate cluster creation script
+
+You'll need to upload the cluster.conf file you edited with your values above, the script called "go", and the private SSH key. 
+The "go" script is found here: https://github.com/git4impatient/GATK4onCloudera/blob/master/go_script_to_create_cluster.sh
+
+With those in place, and the .conf file edited to point to the location of the ssh private key just type in:
+
+go
+
+You will have time for the libation of your choice.  GCE finishes in between 30 minutes to an hour.  AWS is slower, typically around an hour.  Yes, this isn't quite "instant" but compared to installing your own hardware it is amazingly fast.
+
+- Upgrade the cluster to Java8 AND Install GATK4
+
+Log into one of the worker nodes in the cluster, I typically use the last-created-node shown in the cloud console.  The steps for Java8 and GATK4 are documented here:
+https://github.com/git4impatient/GATK4onCloudera/blob/master/commandLineWorkingSession
+
+There are less than 100 lines in the script/working session and many of them are comments. I'd suggest cutting and pasting to the command line.  If you are uncertain about what a particular command is doing it would be a good idea to get help from someone with Linux skills.  Cloudera help is available here: http://community.cloudera.com/ and of course there is subscription support: http://www.cloudera.com/services-support.html
+
+- Solve your genomic challenge with GATK :-)
+
+This is left as an exercise for the reader (sorry, this is Marty humor)
+
+- What's next for this post?
+
+Azure documentation, the process is very similar
+
+- Reference Materials
+
+Cloudera Director Documentation:
+https://www.cloudera.com/documentation/director/latest/topics/director_intro.html
