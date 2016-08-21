@@ -6,7 +6,6 @@ see: http://www.cloudera.com/documentation/director/latest/topics/director_insta
 High level outline:
 - create a cluster with Cloudera Director
 - log into one of the nodes
-- upgrade to Java8
 - install GATK4 on the node
 - get a BAM file
 - run counts on the bam file with GATK 
