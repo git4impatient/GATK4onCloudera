@@ -30,20 +30,27 @@ cd gatk
  echo rebuild gatk
  ./gradlew clean
  ./gradlew installAll
-# now upgrade java that cloudera uses
+# 
+# set up a directory for this user
+
+export NN=$(hdfs getconf -namenodes)
+sudo su - hdfs -c "hadoop fs -mkdir /user/$USER"
+hadoop fs -ls hdfs://$NN:8020/user/$USER
 # 
 #
 # Verification test - get a file and run a CountReadsSpark
 echo get genomic file
-     hadoop fs -ls
+hadoop fs -ls
 wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/NA12878/alignment/NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam
- hadoop fs -put NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam
-echo get NameNode address from Cloudera Manager web ui
-export NN="cloudera-director-16c6f850-e688-40a9-a165-258ac6e68f7a.c.mydirector-1280.internal"
 
-hadoop fs -ls hdfs://$NN:8020/user/marty
+hadoop fs -put NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam
 
- ./gatk-launch  CountReadsSpark --input hdfs://cloudera-director-04476c61-8d72-484f-af33-0af9b6a1d253.c.mydirector-1280.internal:8020/user/marty/NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam --output hdfs://cloudera-director-04476c61-8d72-484f-af33-0af9b6a1d253.c.mydirector-1280.internal:8020/user/marty/counted.out --sparkRunner SPARK --sparkMaster yarn-client -- --num-executors 4 --executor-cores 2 --executor-memory 1g --driver-memory=1g --conf spark.yarn.executor.memoryOverhead=450    --conf spark.yarn.am.memoryOverhead=450
+# export NN="cloudera-director-16c6f850-e688-40a9-a165-258ac6e68f7a.c.mydirector-1280.internal"
+
+# make sure job doesn't fail due to existing directory
+hadoop fs -rm -r hdfs://$NN:8020/user/$USER/counted.out
+
+ ./gatk-launch  CountReadsSpark --input hdfs://$NN:8020/user/$USER/NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam --output hdfs://$NN:8020/user/$USER/counted.out --sparkRunner SPARK --sparkMaster yarn-client -- --num-executors 4 --executor-cores 2 --executor-memory 1g --driver-memory=1g --conf spark.yarn.executor.memoryOverhead=450    --conf spark.yarn.am.memoryOverhead=450
 
  
  hadoop fs -ls counted.out
