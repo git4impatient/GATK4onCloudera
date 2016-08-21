@@ -1,5 +1,4 @@
 #SUCCESSFUL WORKING SESSION - GATK4 ran in google cloud
-#lots of cleanup to do to simplify process, but this works
 
 # (c) copyright 2016 Martin Lurie 7/7/2016  sample code not supported
 
@@ -14,38 +13,15 @@
 #[marty@cloudera-director-46afe32b-54a1-496c-89fe-71378db5450f gatk]$ 
 #===========
 
-#start google cloud cluster with Cloudera Director - go script
-#see: https://wiki.cloudera.com/pages/viewpage.action?spaceKey=FieldTechServices&title=Best+practices+for+Cloudera+use+of+AWS+and+keeping+costs+down
-#for scripts
+#start google cloud cluster with Cloudera Director 
 
+# log into a data node on the cluster
 
-   
-# need oracle java 
-# GET RPM FROM ORACLE
-wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jre-8u60-linux-x64.rpm
-
-# log into a host in the clustere
-# scp jdk and ssh key 
-# 
-# scp -i marty*key /home/marty/Downloads/jdk-8u60-linux-x64.rpm 104.196.24.83:
-# scp -i marty*key martygooglecloud.key 104.196.24.83:
-#
-export HOSTS="10.142.0.2 10.142.0.3 10.142.0.4 10.142.0.5 10.142.0.6"
-export JAVA_HOME=/usr/java/jdk1.8.0_60/jre
-ls -l ~/jdk-8u60-linux-x64.rpm
-for i in $HOSTS ; do scp -i marty*key jdk-8u60-linux-x64.rpm $i:/tmp ; done
-for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "sudo rpm -ivh /tmp/jdk-8u60-linux-x64.rpm"; done
-for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "sudo alternatives --set java /usr/java/jdk1.8.0_60/jre/bin/java";java -version; done
-for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "sudo sed -i '$ a export JAVA_HOME=/usr/java/jdk1.8.0_60/jre' /etc/profile"; done
-for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "tail -3 /etc/profile"; done
-for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "java -version"; done
-# 
 sudo yum install -y curl unzip gcc python-setuptools git automake gcc-c++
 wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.zip     && unzip google-cloud-sdk.zip     && rm google-cloud-sdk.zip
 sudo google-cloud-sdk/install.sh --usage-reporting=true --path-update=true --bash-completion=true --rc-path=/.bashrc --disable-installation-options
- # need sudo su - marty -c 
-mkdir /home/marty/gatk
- cd /home/marty/gatk
+mkdir /home/$USER/gatk
+cd /home/$USER/gatk
 wget https://github.com/broadinstitute/cromwell/releases/download/0.19.3/cromwell-0.19.3.jar
 pwd
 wget https://github.com/broadinstitute/wdltool/releases/download/0.1/wdltool0.1.jar
@@ -56,23 +32,8 @@ cd gatk
  ./gradlew installAll
 # now upgrade java that cloudera uses
 # 
-ssh -i ~/martygooglecloud.key 104.196.31.98
-echo get browser pointed at CM
-# ssh tunneling:  ssh -i googlecloud.key -g -L portOnLocalhost:10networkhost:portOn10networkhost externalIPaddrOf10host
-# example ssh -i martygooglecloud.key -g -L 9087:10.142.0.2:7180 104.196.24.83
-echo STOP cluster
-echo stop management cluster
-echo stop agends
-for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "sudo /etc/init.d/cloudera-scm-agent stop"; done
-echo change location of java in CM
-for i in $CMHOST; do ssh  -i ~/martygooglecloud.key $i "sudo /etc/init.d/cloudera-scm-server stop"; done
-echo update  /etc/default/cloudera-scm-server.
-for i in $CMHOST; do ssh  -i ~/martygooglecloud.key $i "sudo sed -i '$ a export JAVA_HOME=/usr/java/jdk1.8.0_60/jre' /etc/default/cloudera-scm-server"; done
-for i in $CMHOST; do ssh  -i ~/martygooglecloud.key $i "sudo tail /etc/default/cloudera-scm-server"; done
-for i in $CMHOST; do ssh  -i ~/martygooglecloud.key $i "sudo /etc/init.d/cloudera-scm-server-db restart"; done
-for i in $CMHOST; do ssh  -i ~/martygooglecloud.key $i "sudo /etc/init.d/cloudera-scm-server start"; done
- for i in $HOSTS; do ssh  -i ~/martygooglecloud.key $i "sudo /etc/init.d/cloudera-scm-agent start"; done
-echo from the browser restart CM
+#
+# Verification test - get a file and run a CountReadsSpark
 echo get genomic file
      hadoop fs -ls
 wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/phase3/data/NA12878/alignment/NA12878.chrom11.ILLUMINA.bwa.CEU.low_coverage.20121211.bam
