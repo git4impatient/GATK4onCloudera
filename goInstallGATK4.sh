@@ -35,6 +35,7 @@ cd gatk
 
 export NN=$(hdfs getconf -namenodes)
 sudo su - hdfs -c "hadoop fs -mkdir /user/$USER"
+sudo su - hdfs -c "hadoop fs -chown $USER:$USER /user/$USER"
 hadoop fs -ls hdfs://$NN:8020/user/$USER
 # 
 #
