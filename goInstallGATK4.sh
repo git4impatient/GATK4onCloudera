@@ -55,4 +55,3 @@ hadoop fs -rm -r hdfs://$NN:8020/user/$USER/counted.out
  
  hadoop fs -ls counted.out
  hadoop fs -cat counted.out
-                                                                                                                                                                                                                                                                           1,2           Top
